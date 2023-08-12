@@ -8,15 +8,23 @@ qwebirc.irc.CommandHistory = new Class({
     
     this.data = [];
     this.position = 0;
+    this.edited = false;
+    this.caretPos = null;
   },
   addLine: function(line, moveUp) {
-    if((this.data.length == 0) || (line != this.data[0]))
-      this.data.unshift(line);
-      
+    if((this.data.length == 0) || (line != this.data[0])) {
+      if(moveUp && this.edited && this.data.length) {
+        this.data[0] = line; // replace edited but unsent line with new one to have only one unsent item stored in history
+      } else {
+        this.data.unshift(line);
+      }
+    }
     if(moveUp) {
       this.position = 0;
+      this.edited = true;
     } else {
       this.position = -1;
+      this.edited = false;
     }
     
     if(this.data.length > this.options.lines)
@@ -43,5 +51,20 @@ qwebirc.irc.CommandHistory = new Class({
       return null;
       
     return this.data[this.position];
+  },
+  currentLine: function() {
+    if(this.position >= this.data.length || this.position == -1)
+      return null;
+    return this.data[this.position];
+  },
+  getCaretPos: function() {
+    if (this.position === 0 && this.edited === true)
+      return this.caretPos;
+    else
+      return null;
+  },
+  setCaretPos: function(pos) {
+    if (this.position === 0 && this.edited === true)
+      this.caretPos = pos;
   }
 });

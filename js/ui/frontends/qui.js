@@ -194,22 +194,32 @@ qwebirc.ui.QUI = new Class({
       sendInput();
     });
 
+    document.addEvent("keydown", function(e) {
+      if (e.control || /*e.shift ||*/ e.alt || e.meta) { // [kreon] we may want to use shift+something actually
+        return;
+      }
+      if ((e.target.tagName.toLowerCase() === 'input') || (e.target.tagName.toLowerCase() === 'textarea')) {
+        return;
+      }
+      inputbox.focus();
+    }.bind(this));
+
     var reset = this.resetTabComplete.bind(this);
     inputbox.addEvent("focus", reset);
     inputbox.addEvent("mousedown", reset);
     inputbox.addEvent("keypress", reset);
 
     inputbox.addEvent("keydown", function(e) {
-      var resultfn;
+      var resultfn, commandhistory = this.getActiveWindow().commandhistory;
       var cvalue = inputbox.value;
 
       if(e.alt || e.control || e.meta)
         return;
 
       if(e.key == "up" && !e.shift) {
-        resultfn = this.commandhistory.upLine;
+        resultfn = commandhistory.upLine;
       } else if(e.key == "down" && !e.shift) {
-        resultfn = this.commandhistory.downLine;
+        resultfn = commandhistory.downLine;
       } else if(e.key == "tab") {
         this.tabComplete(inputbox, e.shift);
 
@@ -219,22 +229,31 @@ qwebirc.ui.QUI = new Class({
       } else {
         return;
       }
-      
+
       this.resetTabComplete();
-      if((cvalue != "") && (this.lastcvalue != cvalue))
-        this.commandhistory.addLine(cvalue, true);
-      
-      var result = resultfn.bind(this.commandhistory)();
+      if((cvalue != "") && (this.lastcvalue != cvalue)) {
+        commandhistory.addLine(cvalue, true);
+        commandhistory.setCaretPos(qwebirc.util.getCaretPos(inputbox));
+      }
+
+      var caretPos, result = resultfn.bind(commandhistory)();
       
       new Event(e).stop();
       e.preventDefault();
 
       if(!result)
         result = "";
+      else
+        caretPos = commandhistory.getCaretPos.bind(commandhistory)();
+
       this.lastcvalue = result;
-        
+
       inputbox.value = result;
-      qwebirc.util.setAtEnd(inputbox);
+
+      if (caretPos !== null)
+        qwebirc.util.setCaretPos(inputbox, caretPos);
+      else
+        qwebirc.util.setAtEnd(inputbox);
     }.bind(this));
   },
   setLines: function(lines) {
@@ -656,6 +675,16 @@ qwebirc.ui.QUI.Window = new Class({
     if(inputVisible)
       this.parentObject.inputbox.focus();
 
+	// check to restore typed (but unsent) text. somehow distinct typed and unsent
+    var currentCommand = this.commandhistory.currentLine.bind(this.commandhistory)() || "";
+    this.parentObject.inputbox.value = currentCommand;
+    this.parentObject.lastcvalue = currentCommand;
+    var caretPos = this.commandhistory.getCaretPos.bind(this.commandhistory)();
+    if (caretPos !== null)
+      qwebirc.util.setCaretPos(this.parentObject.inputbox, caretPos);
+    else
+      qwebirc.util.setAtEnd(this.parentObject.inputbox);
+
     if(this.type == qwebirc.ui.WINDOW_CHANNEL && this.nicksColoured != this.parentObject.uiOptions.NICK_COLOURS) {
       this.nicksColoured = this.parentObject.uiOptions.NICK_COLOURS;
       
@@ -677,7 +706,13 @@ qwebirc.ui.QUI.Window = new Class({
   },
   deselect: function() {
     this.parent();
-    
+    // save currently typed to inputbox text to restore it upon returning to this tab
+    var cvalue = this.parentObject.inputbox.value;
+    if((cvalue !== "") && (this.parentObject.lastcvalue !== cvalue)) {
+      this.commandhistory.addLine(cvalue, true);
+      this.parentObject.inputbox.placeholder = ""; // if we change windows AND have something written in inputbox, then remove the placeholder as useless
+    }
+    this.commandhistory.setCaretPos(qwebirc.util.getCaretPos(this.parentObject.inputbox));
     this.tab.removeClass("tab-selected");
     this.tab.addClass("tab-unselected");
   },

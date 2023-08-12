@@ -22,7 +22,6 @@ qwebirc.ui.BaseUI = new Class({
     this.parentElement.addClass("qwebirc");
     this.parentElement.addClass("qwebirc-" + uiName);
     this.firstClient = false;
-    this.commandhistory = new qwebirc.irc.CommandHistory();
     this.clientId = 0;
     
     this.windowFocused = true;
