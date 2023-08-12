@@ -57,14 +57,15 @@ qwebirc.config.DEFAULT_OPTIONS = [
     applyChanges: function(value, ui) {
       ui.setSideTabs(value);
     }
+  }],
+  [6, "USE_HIDDENHOST", "Не прятать свою хостмаску (+x)", true, {
+    settableByURL: false,
+    enabled: function() { return [false, false]; }
   }]
 ];
 
 qwebirc.config.QUAKENET_OPTIONS = [
   [5, "ACCEPT_SERVICE_INVITES", "Automatically join channels when invited by Q", false, {
-    settableByURL: false
-  }],
-  [6, "USE_HIDDENHOST", "Hide your hostmask when authed to Q (+x)", true, {
     settableByURL: false
   }]
 ];

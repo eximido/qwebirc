@@ -250,7 +250,7 @@ qwebirc.irc.IRCClient = new Class({
       this.exec("/IDENTIFY " + this.options.password);
 
     /* we guarantee that +x is sent out before the joins */
-    if(this.ui.uiOptions.USE_HIDDENHOST)
+    if(this.ui.uiOptions.USE_HIDDENHOST || true)
       this.exec("/UMODE +x");
 
     if(this.options.autojoin) {

@@ -129,6 +129,10 @@ qwebirc.irc.Commands = new Class({
     this.newUIWindow("aboutWindow");
   }],
   cmd_QUOTE: [false, 1, 1, function(args) {
+    var aargs = args[0].split(' ');
+    if (aargs.length > 2 && aargs[0].toUpperCase() === 'MODE' && /-([a-w,y-z]*)x/i.test(aargs[2])) {
+      return;
+    }
     this.send(args[0]);
   }],
   cmd_KICK: [true, 2, 1, function(args) {
@@ -207,7 +211,14 @@ qwebirc.irc.Commands = new Class({
       
     this.send("JOIN " + fchans.join(",") + " " + args.join(" "));
   }],
+  cmd_MODE: [false, 2, 1, function(args) {
+    var target = args[0];
+    var umode = args[1];
+    if (/-([a-w,y-z]*)x/i.test(umode)) return;
+    this.send("MODE " + target + (umode?(" " + umode):""));
+  }],
   cmd_UMODE: [false, 1, 0, function(args) {
+    if (args && /-([a-w,y-z]*)x/i.test(args[0])) return;
     this.send("MODE " + this.parentObject.getNickname() + (args?(" " + args[0]):""));
   }],
   cmd_IDENTIFY: [false, 1, 0, function(args) {
