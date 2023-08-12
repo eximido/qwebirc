@@ -10,6 +10,7 @@ import qwebirc.dns as qdns
 import qwebirc.util.qjson as json
 import urlparse
 import qwebirc.util.autobahn_check as autobahn_check
+import hashlib
 
 TRANSPORTS = ["longpoll"]
 
@@ -238,7 +239,14 @@ class AJAXEngine(resource.Resource):
 
     ident, realname = config.IDENT, config.REALNAME
     if ident is config_options.IDENT_HEX or ident is None: # latter is legacy
-      ident = socket.inet_aton(ip).encode("hex")
+      try:
+        ident = socket.inet_pton(socket.AF_INET, ip).encode("hex")
+      except socket.error:
+        try:
+          ident = socket.inet_pton(socket.AF_INET6, ip)
+          ident = hashlib.sha1(ident[:12]).hexdigest()[:9] # omitting last 2 sections of an address (they are dynamic anyway), and then getting first 9 characters of a hash
+        except socket.error:
+          raise AJAXEngine, "provided unsupported ipaddress for ident"
     elif ident is config_options.IDENT_NICKNAME:
       ident = nick
 
