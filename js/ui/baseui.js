@@ -211,11 +211,11 @@ qwebirc.ui.BaseUI = new Class({
       IRC connection is made, else users are going to get
       tricked into getting themselves glined
     */
-  loginBox: function(callback, initialNickname, initialChannels, autoConnect, autoNick) {
+  loginBox: function(callback, initialNickname, initialChannels, initialPassword, autoConnect, autoNick) {
     this.postInitialize();
 
     this.addCustomWindow("Connect", qwebirc.ui.ConnectPane, "connectpane", {
-      initialNickname: initialNickname, initialChannels: initialChannels, autoConnect: autoConnect, callback: callback, autoNick: autoNick,
+      initialNickname: initialNickname, initialChannels: initialChannels, initialPassword: initialPassword, autoConnect: autoConnect, callback: callback, autoNick: autoNick,
       uiOptions: this.options
     }, qwebirc.ui.WINDOW_CONNECT);
   },

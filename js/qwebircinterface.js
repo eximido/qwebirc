@@ -81,6 +81,7 @@ qwebirc.ui.Interface = new Class({
 
       var inick = null;
       var ichans = this.options.initialChannels;
+      var ipassword = null;
       var autoConnect = false;
       
       if(this.options.searchURL) {
@@ -162,7 +163,7 @@ qwebirc.ui.Interface = new Class({
       if(usingAutoNick && autoConnect)
         inick = this.options.initialNickname;
       
-      var details = ui_.loginBox(callback, inick, ichans, autoConnect, usingAutoNick);
+      var details = ui_.loginBox(callback, inick, ichans, ipassword, autoConnect, usingAutoNick);
     }.bind(this));
   },
   getHueArg: function(args, t) {

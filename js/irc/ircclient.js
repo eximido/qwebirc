@@ -3,6 +3,7 @@ qwebirc.irc.IRCClient = new Class({
   options: {
     nickname: "qwebirc",
     autojoin: "",
+    password: "",
     maxnicks: 10
   },
   initialize: function(options, ui) {
@@ -236,7 +237,11 @@ qwebirc.irc.IRCClient = new Class({
     this.tracker = new qwebirc.irc.IRCTracker(this);
     this.nickname = nickname;
     this.newServerLine("SIGNON");
-    
+
+    /* simply send a password if it was requested */
+    if(this.options.password)
+      this.exec("/IDENTIFY " + this.options.password);
+
     /* we guarantee that +x is sent out before the joins */
     if(this.ui.uiOptions.USE_HIDDENHOST)
       this.exec("/UMODE +x");

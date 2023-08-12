@@ -210,6 +210,10 @@ qwebirc.irc.Commands = new Class({
   cmd_UMODE: [false, 1, 0, function(args) {
     this.send("MODE " + this.parentObject.getNickname() + (args?(" " + args[0]):""));
   }],
+  cmd_IDENTIFY: [false, 1, 0, function(args) {
+  	if (args && args[0])
+      this.send("NICKSERV IDENTIFY " + args[0]);
+  }],
   cmd_BEEP: [false, undefined, undefined, function(args) {
     this.parentObject.ui.beep(false);
   }],

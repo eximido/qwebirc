@@ -1,7 +1,7 @@
 qwebirc.ui.ConnectPane = new Class({
   Implements: [Events],
   initialize: function(parent, options) {
-    var callback = options.callback, initialNickname = options.initialNickname, initialChannels = options.initialChannels, autoConnect = options.autoConnect, autoNick = options.autoNick;
+    var callback = options.callback, initialNickname = options.initialNickname, initialChannels = options.initialChannels, initialPassword = options.initialPassword, autoConnect = options.autoConnect, autoNick = options.autoNick;
     this.options = options;
     this.cookie = new Hash.Cookie("optconn", {duration: 3650, autoSave: false});
     var uiOptions = options.uiOptions;
@@ -35,7 +35,7 @@ qwebirc.ui.ConnectPane = new Class({
         }
       }
 
-      if(initialNickname === null && initialChannels === null) {
+      if(initialNickname === null && initialChannels === null && initialPassword === null) {
         var n2 = this.cookie.get("nickname");
         if(n2 !== null)
           initialNickname = n2;
@@ -43,6 +43,10 @@ qwebirc.ui.ConnectPane = new Class({
         var c2 = this.cookie.get("autojoin");
         if(c2 !== null)
           initialChannels = c2;
+
+        var p2 = this.cookie.get("password");
+        if(p2 !== null)
+          initialPassword = p2;
       }
 
       if(initialChannels === null) {
@@ -51,6 +55,7 @@ qwebirc.ui.ConnectPane = new Class({
 
       exec("[name=nickname]", util.setText(initialNickname));
       exec("[name=channels]", util.setText(initialChannels));
+      exec("[name=password]", util.setText(initialPassword));
       exec("[name=prettychannels]", function(node) { this.__buildPrettyChannels(node, initialChannels); }.bind(this));
       exec("[name=networkname]", util.setText(uiOptions.networkName));
 
@@ -122,7 +127,7 @@ qwebirc.ui.ConnectPane = new Class({
 
     this.__cancelLogin();
     this.fireEvent("close");
-    this.cookie.extend(data);
+    this.cookie.extend(new Hash(data).filter(function(value,key) { return key !== 'password'; })); // don't save the password (todo: maybe encode it somehow)
     this.cookie.save();
     this.options.callback(data);
   },
@@ -216,13 +221,14 @@ qwebirc.ui.ConnectPane = new Class({
     this.util.exec("[name=" + calleename + "]", this.util.setVisible(false));
   },
   __validateConfirmData: function() {
-    return {nickname: this.options.initialNickname, autojoin: this.options.initialChannels};
+    return {nickname: this.options.initialNickname, autojoin: this.options.initialChannels, password: this.options.initialPassword};
   },
   __validateLoginData: function() {
-    var nick = this.rootElement.getElement("input[name=nickname]"), chan = this.rootElement.getElement("input[name=channels]");
+    var nick = this.rootElement.getElement("input[name=nickname]"), chan = this.rootElement.getElement("input[name=channels]"), pass = this.rootElement.getElement("input[name=password]");
 
     var nickname = nick.value;
     var chans = chan.value;
+    var password = pass.value;
     if(chans == "#") /* sorry channel "#" :P */
       chans = "";
 
@@ -240,7 +246,7 @@ qwebirc.ui.ConnectPane = new Class({
       return false;
     }
     
-    var data = {nickname: nickname, autojoin: chans};
+    var data = {nickname: nickname, autojoin: chans, password: password};
     return data;
   },
   __buildPrettyChannels: function(node, channels) {
@@ -287,6 +293,8 @@ qwebirc.ui.LoginBox2 = function(parentElement, callback, initialNickname, initia
 
     var nickname = nick.value;
     var chans = chan.value;
+    var password = password.value;
+
     if(chans == "#") /* sorry channel "#" :P */
       chans = "";
 
@@ -303,7 +311,7 @@ qwebirc.ui.LoginBox2 = function(parentElement, callback, initialNickname, initia
       return;
     }
     
-    var data = {"nickname": nickname, "autojoin": chans};
+    var data = {"nickname": nickname, "autojoin": chans, "password": password};
     if(qwebirc.auth.enabled()) {
       if(qwebirc.auth.passAuth() && authCheckBox.checked) {
           if(!usernameBox.value || !passwordBox.value) {

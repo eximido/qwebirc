@@ -59,7 +59,7 @@
   _background: none;
 }
 
-.qwebirc-loginbox input#loginnickname, .qwebirc-loginbox input#loginchannels {
+.qwebirc-loginbox input#loginnickname, .qwebirc-loginbox input#loginchannels, .qwebirc-loginbox input#loginpassword {
   width: 200px;
 }
 
