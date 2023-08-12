@@ -123,8 +123,29 @@ qwebirc.irc.IRCConnection = new Class({
     if(this.disconnected)
       return false;
 
+    // this MAY work better since sendBeacon is getting ignored in some later browsers
+    // we won't return after this in case it also gets broken. guess it's better to send quit command twice than never
+    if(unload && window.fetch) {
+      fetch(qwebirc.global.dynamicBaseURL + "e/p?r=" + this.cacheAvoidance + "&t=" + this.counter++, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: "s=" + this.sessionid + "&c=" + encodeURIComponent(data) + "&n=" + this.__pubSeqNo,
+        keepalive: true
+      });
+    }
+
     if(synchronous) {
-      this.__send([this.__pubSeqNo, data], false);
+      if(unload && navigator.sendBeacon) {
+        var usp = new FormData();
+        usp.append('s',this.sessionid);
+        usp.append('c',data);
+        usp.append('n',this.__pubSeqNo);
+        navigator.sendBeacon(qwebirc.global.dynamicBaseURL + "e/p?r=" + this.cacheAvoidance + "&t=" + this.counter++, usp);
+      } else {
+        this.__send([this.__pubSeqNo, data], false);
+      }
     } else if(this.__ws && this.__wsAuthed) {
       this.__ws.send("p" + this.__pubSeqNo + "," + data);
     } else {

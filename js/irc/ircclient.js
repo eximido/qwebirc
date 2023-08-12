@@ -628,8 +628,8 @@ qwebirc.irc.IRCClient = new Class({
   serverError: function(message) {
     this.newServerLine("ERROR", {"m": message});
   },
-  quit: function(message) {
-    this.send("QUIT :" + message, true);
+  quit: function(message, unload) {
+    this.send("QUIT :" + message, true, unload);
     this.disconnect();
   },
   disconnect: function() {

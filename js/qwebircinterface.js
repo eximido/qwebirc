@@ -74,8 +74,11 @@ qwebirc.ui.Interface = new Class({
         var IRC = new qwebirc.irc.IRCClient(options, ui_);
         IRC.connect();
         window.onbeforeunload = qwebirc_ui_onbeforeunload;
-        window.addEvent("unload", function() {
-          IRC.quit("Page closed");
+        window.addEvent("pagehide", function() { // [kreon] just unload doesnt work in chrome
+          IRC.quit("Page closed", true);
+        });
+        window.addEvent("unload", function() { // [kreon] duplicated just in case
+          IRC.quit("Page unloaded", true);
         });
       };
 
