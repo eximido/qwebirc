@@ -200,6 +200,9 @@ qwebirc.irc.BaseIRCClient = new Class({
     
     return true;
   },
+  irc_PONG: function(prefix, params) {
+    return true;
+  },
   irc_JOIN: function(prefix, params) {
     var channel = params[0];
     var user = prefix;
@@ -394,7 +397,10 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.whoisNick = nick;
 
     return this.whois(nick, "user", {ident: params[2], hostname: params[3], realname: params.indexFromEnd(-1)});
-  },  
+  },
+  irc_RPL_WHOWASUSER: function(prefix, params) {
+    return this.irc_RPL_WHOISUSER(prefix, params);
+  },
   irc_RPL_WHOISSERVER: function(prefix, params) {
     var nick = params[1];
     var server = params[2];
@@ -452,12 +458,32 @@ qwebirc.irc.BaseIRCClient = new Class({
 
     return this.whois(nick, "generictext", {text: text});
   },
+  irc_RPL_WHOISCHARSET: function(prefix, params) {
+    var nick = params[1];
+
+    return this.whois(nick, "charset", {charset: params.indexFromEnd(-1).split(' ').slice(-1)});
+  },
+  irc_RPL_WHOISREALHOST: function(prefix, params) {
+    var nick = params[1];
+    return this.whois(nick, "realhost", {realhost: params.indexFromEnd(-1).split(' ').slice(-1)});
+  },
+  irc_RPL_WHOISENCRYPTED: function(prefix, params) {
+    var nick = params[1];
+    return this.whois(nick, "encrypted", {encrypted: params.indexFromEnd(-1)});
+  },
   irc_RPL_ENDOFWHOIS: function(prefix, params) {
     var nick = params[1];
     var text = params.indexFromEnd(-1);
     this.whoisNick = null;
     
     return this.whois(nick, "end", {});
+  },
+  irc_RPL_ENDOFWHOWAS: function(prefix, params) {
+    var nick = params[1];
+    var text = params.indexFromEnd(-1);
+    this.whoisNick = null;
+    
+    return this.whois(nick, "endw", {});
   },
   irc_genericError: function(prefix, params) {
     var target = params[1];

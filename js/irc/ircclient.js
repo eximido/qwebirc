@@ -682,8 +682,19 @@ qwebirc.irc.IRCClient = new Class({
     } else if(type == "generictext") {
       mtype = "GENERICTEXT";
       ndata.m = data.text;
+    } else if(type == "charset") {
+      mtype = "CHARSET";
+      ndata.m = data.charset;
+    } else if(type == "realhost") {
+      mtype = "REALHOST";
+      ndata.m = data.realhost;
+    } else if(type == "encrypted") {
+      mtype = "ENCRYPTED";
+      ndata.m = data.encrypted;
     } else if(type == "end") {
       mtype = "END";
+    } else if(type == "endw") {
+      mtype = "ENDW";
     } else {
       return false;
     }
