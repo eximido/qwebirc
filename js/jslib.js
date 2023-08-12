@@ -107,7 +107,7 @@ qwebirc.util.longtoduration = function(l) {
   var hours = Math.floor((l % (3600 * 24)) / 3600);
   var days = Math.floor(l / (24*3600));
   
-  return days + " days " + hours + " hours " + minutes + " minutes " + seconds + " seconds";
+  return (days > 0 ? days + " day" + (days !== 1 ? "s" : "") + " " : "") + (hours > 0 ? hours + " hour" + (hours !== 1 ? "s" : "") + " " : "") + (minutes > 0 ? minutes + " minute" + (minutes !== 1 ? "s" : "") + " " : "") + seconds + " second" + (seconds !== 1 ? "s" : "");
 }
 
 qwebirc.util.pad = function(x) {

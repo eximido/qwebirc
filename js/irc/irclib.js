@@ -57,7 +57,7 @@ String.prototype.hostToHost = function() {
 }
 
 qwebirc.irc.IRCTimestamp = function(d) {
-  return "[" + qwebirc.util.pad(d.getHours()) + ":" + qwebirc.util.pad(d.getMinutes()) + "]";
+  return "[" + qwebirc.util.pad(d.getHours()) + ":" + qwebirc.util.pad(d.getMinutes()) + ":" + qwebirc.util.pad(d.getSeconds()) + "]";
 }
 
 qwebirc.irc.IRCDate = function(d) {
