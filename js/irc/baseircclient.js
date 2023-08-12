@@ -42,6 +42,10 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.send = this.connection.send.bind(this.connection);
     this.disconnect = this.connection.disconnect.bind(this.connection);
 
+    this.connection.addEvent("error", function(message) {
+      this.printConnectionError(message);
+    }.bind(this));
+
     this.setupGenericErrors();
   },
   connect: function() {

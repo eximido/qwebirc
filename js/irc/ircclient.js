@@ -35,6 +35,11 @@ qwebirc.irc.IRCClient = new Class({
     this.parent();
     this.newServerInfoLine("CONNECTING", "");
   },
+  printConnectionError: function(message) {
+    this.windows.each(function(k, v) {
+      v.addLine("DISCONNECTWG", {"m": message});
+    });
+  },
   newLine: function(window, type, data) {
     if(!data)
       data = {};
@@ -564,18 +569,12 @@ qwebirc.irc.IRCClient = new Class({
     }, this);
   },
   disconnected: function(message) {
-    var toClose = [];
-    this.windows.each(function(k, v) {
-      if(v.type == qwebirc.ui.WINDOW_CHANNEL)
-        toClose.push(v);
-    });
-    for(var i=0;i<toClose.length;i++)
-      toClose[i].close();
-
     this.tracker = undefined;
     
     qwebirc.connected = false;
-    this.newServerLine("DISCONNECT", {"m": message});
+    this.windows.each(function(k, v) {
+      v.addLine("DISCONNECT", {"m": message});
+    });
   },
   nickOnChanHasPrefix: function(nick, channel, prefix) {
     var entry = this.tracker.getNickOnChannel(nick, channel);

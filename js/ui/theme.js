@@ -20,6 +20,7 @@ qwebirc.ui.themes.Default = {
   "DISCONNECT": ["Disconnected from server: $m", true],
   "ERROR": ["ERROR: $m", true],
   "SERVERNOTICE": ["$m", true],
+  "DISCONNECTWG": ["Disconnected from webgate: $m", true],
   "JOIN": ["${$N$} [$h] has joined $c", true],
   "OURJOIN": ["${$N$} [$h] has joined $c", true],
   "PART": ["${$N$} [$h] has left $c [$m]", true],
