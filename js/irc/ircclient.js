@@ -465,7 +465,11 @@ qwebirc.irc.IRCClient = new Class({
     if(this.isIgnored(nick, host))
       return;
 
-    this.newChanLine(channel, "CHANNOTICE", user, {"m": message, "@": this.getNickStatus(channel, user.hostToNick())});
+    if (this.isChannel(channel)) { // [kreon] better to check if channel actually is open or even exists
+      this.newChanLine(channel, "CHANNOTICE", user, {"m": message, "@": this.getNickStatus(channel, user.hostToNick())});
+    } else {
+      this.newActiveLine("PRIVNOTICE", {"m": message, "h": host, "n": nick});
+    } 
   },
   userPrivmsg: function(user, message) {
     var nick = user.hostToNick();
@@ -508,7 +512,7 @@ qwebirc.irc.IRCClient = new Class({
       this.newQueryWindow(nick, false);
       this.newQueryOrActiveLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick}, false);
     } else {
-      this.newTargetOrActiveLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
+      this.newActiveLine("PRIVNOTICE", {"m": message, "h": host, "n": nick});
     }
     
     this.checkLogin(user, message);
@@ -644,7 +648,7 @@ qwebirc.irc.IRCClient = new Class({
     var mtype;
     
     var xsend = function() {
-      this.newTargetOrActiveLine(nick, "WHOIS" + mtype, ndata);
+      this.newActiveLine("WHOIS" + mtype, ndata);
     }.bind(this);
     
     if(type == "user") {
