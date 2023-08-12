@@ -147,7 +147,7 @@ qwebirc.ui.BaseUI = new Class({
     this.windows.get(clientId).put(window.identifier, this.windowArray[index]);
     
     if(window.active)
-      this.updateTitle(window.name + " - " + this.options.appTitle);
+      this.updateTitleW(window);
     
     window.rename(window.name);
     return window;
@@ -156,7 +156,11 @@ qwebirc.ui.BaseUI = new Class({
     if(this.active)
       this.active.deselect();
     window.select();  /* calls setActiveWindow */
-    this.updateTitle(window.name + " - " + this.options.appTitle);
+    this.updateTitleW(window);
+  },
+  updateTitleW: function(window) {
+    var name = window && window.name || this.active && this.active.name || ''; // hacks!! hacks everywhere!!!
+    this.updateTitle(name + (this.active && this.active.nicklist ? " (" + Array.from(this.active.nicklist.children).filter(function(a) {return !!a.textContent.length; }).length + ")" : "") + " - " + this.options.appTitle);
   },
   updateTitle: function(text) {
     document.title = text;

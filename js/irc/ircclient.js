@@ -111,8 +111,10 @@ qwebirc.irc.IRCClient = new Class({
     });
     
     var w = this.getWindow(channel);
-    if(w)
+    if(w) {
       w.updateNickList(sortednames);
+      this.ui.updateTitleW();
+    }
   },
   getWindow: function(name) {
     return this.windows.get(this.toIRCLower(name));
