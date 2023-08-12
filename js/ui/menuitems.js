@@ -1,10 +1,10 @@
 qwebirc.ui.UI_COMMANDS_P1 = [
-  ["Options", "options"],
-  ["Add webchat to your site", "embedded"]
+  ["Настройки", "options"],
+  ["Добавить на ваш сайт", "embedded"]
 ];
 
 qwebirc.ui.UI_COMMANDS_P2 = [
-  ["About qwebirc", "about"]
+  ["Про qwebirc", "about"]
 ];
 
 qwebirc.ui.MENU_ITEMS = function() {
@@ -49,7 +49,7 @@ qwebirc.ui.MENU_ITEMS = function() {
       predicate: true
     },
     {
-      text: "query",
+      text: "ЛС",
       fn: command("query"),
       predicate: true
     },
@@ -84,12 +84,12 @@ qwebirc.ui.MENU_ITEMS = function() {
       predicate: compose(isOpped, targetVoiced)
     },
     {
-      text: "ignore",
+      text: "игнорировать",
       fn: command("ignore"),
       predicate: invert(isIgnored)
     },
     {
-      text: "unignore",
+      text: "разыгнорировать",
       fn: command("unignore"),
       predicate: isIgnored
     }

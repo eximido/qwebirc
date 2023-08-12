@@ -1,0 +1,19 @@
+#ircui.qwebirc-qui {
+	font-size: 130%;
+}
+.qwebirc-qui.ircwindow {
+	font-size: 0.9em;
+}
+.qwebirc-qui .input input.keyboard-input {
+	font-size: 1.0em;
+}
+
+.qwebirc-qui .pdesc {
+	color: darkgray;
+	font-size: 0.67em;
+}
+
+.qwebirc-qui td.pdesc {
+	padding-top: 1.1em;
+	font-style: italic;
+}

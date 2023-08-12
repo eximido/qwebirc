@@ -142,7 +142,7 @@ qwebirc.ui.QUI = new Class({
     var inputbox = new Element("input");
     this.addEvent("signedOn", function(client) {
       this.getStatusWindow(client).lines.removeClass("spinner");
-      inputbox.placeholder = "chat here! you can also use commands, like /JOIN";
+      inputbox.placeholder = "напишите что-нибудь!";
       var d = function() { inputbox.addClass("input-flash"); }.delay(250);
       var d = function() { inputbox.removeClass("input-flash"); }.delay(500);
       var d = function() { inputbox.addClass("input-flash"); }.delay(750);
@@ -652,7 +652,7 @@ qwebirc.ui.QUI.Window = new Class({
       if (topic) {
         this.parent(topic, t);
       } else {
-        t.appendChild(document.createTextNode("(no topic set)"));
+        t.appendChild(document.createTextNode("(топик не установлен)"));
       }
     }
 

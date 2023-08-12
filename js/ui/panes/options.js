@@ -14,8 +14,8 @@ qwebirc.ui.supportsFocus = function() {
  * settableByURL...
  */
 qwebirc.config.DEFAULT_OPTIONS = [
-  [1, "BEEP_ON_MENTION", "Beep on activity", true],
-  [16, "NOTIFICATIONS", "Emit HTML5 notifications on activity", false, {
+  [1, "BEEP_ON_MENTION", "Пиликать при упоминании вашего ника", true],
+  [16, "NOTIFICATIONS", "Слать HTML5-уведомления при упоминании вашего ника", false, {
     enabled: function() {
       if(!("Notification" in window))
         return [false, false]; /* [disabled, default_value] */
@@ -26,29 +26,29 @@ qwebirc.config.DEFAULT_OPTIONS = [
         ui.setNotifications(value);
     }
   }],
-  [7, "FLASH_ON_MENTION", "Flash titlebar when nick mentioned or on query activity", true, {
+  [7, "FLASH_ON_MENTION", "Мигать заголовком окна при упоминании вашего ника", true, {
     enabled: qwebirc.ui.supportsFocus
   }],
-  [2, "DEDICATED_MSG_WINDOW", "Send privmsgs to dedicated messages window", false],
-  [4, "DEDICATED_NOTICE_WINDOW", "Send notices to dedicated message window", false],
-  [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames in channel lines", true],
+  [2, "DEDICATED_MSG_WINDOW", "Слать личные сообщения в отдельное окно", false],
+  [4, "DEDICATED_NOTICE_WINDOW", "Слать нотисы в отдельное окно", false],
+  [3, "NICK_OV_STATUS", "Показывать статусные значки (@/+) перед никами в строках чата", true],
   /* 5 and 6 are reserved */
-  [8, "LASTPOS_LINE", "Show a last position indicator for each window", true, {
+  [8, "LASTPOS_LINE", "Показывать индикатор последнего просмотренного сообщения в каждом окне", true, {
     enabled: qwebirc.ui.supportsFocus
   }],
-  [9, "NICK_COLOURS", "Automatically colour nicknames", false],
-  [10, "HIDE_JOINPARTS", "Hide JOINS/PARTS/QUITS", false],
-  [11, "STYLE_HUE", "Adjust user interface hue", function(ui) {
+  [9, "NICK_COLOURS", "Автоматически раскрашивать ники", false],
+  [10, "HIDE_JOINPARTS", "Спрятать события JOINS/PARTS/QUITS", false],
+  [11, "STYLE_HUE", "Тон пользовательского интерфейса чата", function(ui) {
     return {class_: qwebirc.config.HueOption, default_: ui.__styleValues.hue};
   }, {
     applyChanges: function(value, ui) {
       ui.setModifiableStylesheetValues({hue: value});
     }
   }],
-  [12, "QUERY_ON_NICK_CLICK", "Query on nickname click in channel", false],
-  [13, "SHOW_NICKLIST", "Show nickname list in channels", qwebirc.util.deviceHasKeyboard()],
-  [14, "SHOW_TIMESTAMPS", "Show timestamps", true], /* we rely on the hue update */
-  [15, "SIDE_TABS", "Show tabs on the side", false, {
+  [12, "QUERY_ON_NICK_CLICK", "Открывать окно личной переписки кликом по нику в чате", false],
+  [13, "SHOW_NICKLIST", "Показывать список присутствующих на канале", qwebirc.util.deviceHasKeyboard()],
+  [14, "SHOW_TIMESTAMPS", "Показывать временные метки сообщений", true], /* we rely on the hue update */
+  [15, "SIDE_TABS", "Показывать список открытых окон сбоку", false, {
     enabled: function() {
       if(Browser.Engine.trident && Browser.Engine.version < 8)
         return [false, false]; /* [disabled, default_value] */
@@ -58,7 +58,7 @@ qwebirc.config.DEFAULT_OPTIONS = [
       ui.setSideTabs(value);
     }
   }],
-  [6, "USE_HIDDENHOST", "�� ������� ���� ��������� (+x)", true, {
+  [6, "USE_HIDDENHOST", "Не прятать свою хостмаску (+x)", true, {
     settableByURL: false,
     enabled: function() { return [false, false]; }
   }]

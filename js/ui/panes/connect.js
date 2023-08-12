@@ -233,7 +233,7 @@ qwebirc.ui.ConnectPane = new Class({
       chans = "";
 
     if(!nickname) {
-      alert("You must supply a nickname.");
+      alert("Необходимо указать ник.");
       nick.focus();
       return false;
     }
@@ -241,7 +241,7 @@ qwebirc.ui.ConnectPane = new Class({
     var stripped = qwebirc.global.nicknameValidator.validate(nickname);
     if(stripped != nickname) {
       nick.value = stripped;
-      alert("Your nickname was invalid and has been corrected; please check your altered nickname and try again.");
+      alert("Недопустимые символы в нике. Проверьте ник и нажмите \"Подключиться\".");
       nick.focus();
       return false;
     }
@@ -285,7 +285,7 @@ qwebirc.ui.LoginBox2 = function(parentElement, callback, initialNickname, initia
   */
 
   var connbutton = new Element("input", {"type": "submit"});
-  connbutton.set("value", "Connect");
+  connbutton.set("value", "Подключиться");
   var r = createRow(undefined, connbutton);
   
   form.addEvent("submit", function(e) {
@@ -299,14 +299,14 @@ qwebirc.ui.LoginBox2 = function(parentElement, callback, initialNickname, initia
       chans = "";
 
     if(!nickname) {
-      alert("You must supply a nickname.");
+      alert("Необходимо указать ник.");
       nick.focus();
       return;
     }
     var stripped = qwebirc.global.nicknameValidator.validate(nickname);
     if(stripped != nickname) {
       nick.value = stripped;
-      alert("Your nickname was invalid and has been corrected; please check your altered nickname and press Connect again.");
+      alert("Недопустимые символы в нике. Проверьте ник и снова нажмите \"Подключиться\".");
       nick.focus();
       return;
     }

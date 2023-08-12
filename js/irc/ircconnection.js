@@ -67,7 +67,7 @@ qwebirc.irc.IRCConnection = new Class({
       
     if(floodProtection && !this.disconnected && this.__isFlooding()) {
       this.disconnect();
-      this.__error("BUG: uncontrolled flood detected -- disconnected.");
+      this.__error("Сбой: обнаружен флуд - соединение разорвано.");
     }
     
     var asynchronous = true;
@@ -212,7 +212,7 @@ qwebirc.irc.IRCConnection = new Class({
         
         if(!this.disconnected) {
           this.disconnect();
-          this.__error("An error occurred: " + (o ? o[1] : "(unknown error)"));
+          this.__error("Произошла ошибка: " + (o ? o[1] : "(сведений не указано)"));
         }
         return false;
       }
@@ -232,7 +232,7 @@ qwebirc.irc.IRCConnection = new Class({
           retryEvent = this.__send.delay(1500 * this.__sendRetries + Math.random() * 1000, this, [data, queued]);
         } else {
           this.disconnect();
-          this.__error("Unable to send command after multiple retries.");
+          this.__error("Исчерпаны попытки выполнить команду.");
         }
       }.bind(this);
       r.addEvent("error", retry);
@@ -244,7 +244,7 @@ qwebirc.irc.IRCConnection = new Class({
     if(!o || o[0] == false) {
       if(!this.disconnected) {
         this.disconnect();
-        this.__error("An error occurred: " + (o ? o[1] : "(unknown error)"));
+        this.__error("Произошла ошибка: " + (o ? o[1] : "(сведений не указано)"));
       }
       return false;
     }
@@ -282,7 +282,7 @@ qwebirc.irc.IRCConnection = new Class({
     if(this.__retryAttempts++ >= this.options.maxRetries && !this.disconnected) {
       this.disconnect();
       
-      this.__error("Error: connection closed after several requests failed.");
+      this.__error("Ошибка: соединение разорвано после нескольких неудачных запросов."); // [kreon] Error: connection closed after several requests failed
       return false;
     }
     
@@ -324,7 +324,7 @@ qwebirc.irc.IRCConnection = new Class({
 
     if(this.__isFlooding()) {
       this.disconnect();
-      this.__error("BUG: uncontrolled flood detected -- disconnected.");
+      this.__error("Сбой: обнаружен флуд - соединение разорвано.");
     }
 
     var ws = new WebSocket(this.__wsURL());
@@ -356,7 +356,7 @@ qwebirc.irc.IRCConnection = new Class({
       if(e.wasClean && (e.code == 4999 || e.code == 4998)) {
         if(e.reason) {
           this.disconnect();
-          this.__error("An error occurred: " + (e.reason ? e.reason : "(no reason returned)"));
+          this.__error("Произошла ошибка: " + (e.reason ? e.reason : "(сведения не указаны)"));
           return;
         }
       }
@@ -384,7 +384,7 @@ qwebirc.irc.IRCConnection = new Class({
       }
 
       this.disconnect();
-      this.__error("An error occurred: bad message type");
+      this.__error("Произошла ошибка: неверный тип сообщения");
     }.bind(this);
     var connectionTimeout = function() {
       this.log("Websocket connection timeout...");
@@ -443,12 +443,12 @@ qwebirc.irc.IRCConnection = new Class({
     r.addEvent("complete", function(o) {
       if(!o) {
         this.disconnect();
-        this.__error("Couldn't connect to remote server.");
+        this.__error("Невозможно подключиться к удаленному серверу.");
         return;
       }
       if(o[0] == false) {
         this.disconnect();
-        this.__error("An error occurred: " + o[1]);
+        this.__error("Произошла ошибка: " + o[1]);
         return;
       }
       this.sessionid = o[1];
