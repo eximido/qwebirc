@@ -98,12 +98,7 @@ class QWebIRCClient(basic.LineReceiver):
       self.write("PASS %s_%s_%s" % (config.CGIIRC_STRING, ip, hostname))
       self.write("USER %s bleh %s :%s" % (ident, ip, realname))
     elif config.WEBIRC_MODE == config_options.WEBIRC_REALNAME or config.WEBIRC_MODE is None: # last bit is legacy
-      if ip == hostname:
-        dispip = ip
-      else:
-        dispip = "%s/%s" % (hostname, ip)
-
-      self.write("USER %s bleh bleh :%s - %s" % (ident, dispip, realname))
+      self.write("USER %s bleh bleh :%s %s" % (ident, realname, nick))
 
     if pass_ is not None:
       self.write("PASS :%s" % pass_)

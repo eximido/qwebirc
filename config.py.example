@@ -67,8 +67,8 @@ IDENT = "webchat"
 #           WEBIRC_PASSWORD to be the password used in the server's
 #           configuration file.
 #         - the literal value None, i.e. WEBIRC_MODE = None
-#           Send the IP and hostname in the realname field, overrides
-#          the REALNAME option.
+#           Send the IP encoded in the ident field, while the user specified
+#           nick will be appended to the REALNAME
 WEBIRC_MODE = None
 
 # OPTION: WEBIRC_PASSWORD
