@@ -71,6 +71,22 @@ class IRCSession:
     self.cleanupschedule = None
     self.pubSeqNo = -1
     self.subSeqNo = 0
+    self.client = None
+    self.__wtimeout = None
+
+  def renewWtimeout(self, wtimeout, reason):
+    # disconnect client from the irc when nothing is sent in a reasonable time
+    # (kinda workaround for our inability to properly send quit command when users have closed their browser)
+    if self.__wtimeout is not None:
+      try:
+        self.__wtimeout.cancel()
+      except error.AlreadyCalled:
+        pass
+    self.__wtimeout = reactor.callLater(wtimeout, self.renewWtimeoutError, reason)
+
+  def renewWtimeoutError(self, reason):
+    if self.client is not None and self.client.client is not None:
+      self.client.error(reason)
 
   def subscribe(self, channel, seqNo=None):
     if len(self.subscriptions) >= config.MAXSUBSCRIPTIONS:
@@ -307,6 +323,7 @@ class AJAXEngine(resource.Resource):
 
     session.subscribe(channel, seq_no)
 
+    session.renewWtimeout(config.HTTP_AJAX_REQUEST_TIMEOUT, "ajax connection timed out")
     timeout_entry = reactor.callLater(config.HTTP_AJAX_REQUEST_TIMEOUT, session.timeout, channel)
     def cancel_timeout(result):
       try:
@@ -335,6 +352,7 @@ class AJAXEngine(resource.Resource):
     session = self.getSession(request)
     try:
       session.push(ircclient.irc_decode(command[0]), seq_no)
+      session.renewWtimeout(config.HTTP_AJAX_REQUEST_TIMEOUT, "ajax connection timed out")
     except AttributeError: # occurs when we haven't noticed an error
       session.disconnect()
       raise AJAXException, "Connection closed by server; try reconnecting by reloading the page."
@@ -419,6 +437,7 @@ if has_websocket:
 
           self.__cancelTimeout()
           self.__session = session
+          self.__session.renewWtimeout(75, "websocket connection timed out")
           self.send("s", "True")
           self.__state = self.AUTHED
           self.__channel = WebSocketChannel(self)
@@ -438,7 +457,12 @@ if has_websocket:
               raise ValueError
           except ValueError:
             self.close("Bad value")
+          self.__session.renewWtimeout(75, "websocket connection timed out")
           self.__session.push(ircclient.irc_decode(message))
+          return
+        if message_type == "z": # check connection
+          self.__session.renewWtimeout(75, "websocket connection timed out")
+          self.send("z", "True")
           return
 
       self.close("Bad message type")

@@ -50,6 +50,9 @@ qwebirc.irc.IRCConnection = new Class({
     this.__subSeqNo = 0;
     this.__sendRetries = 0;
 
+    // [kreon] we want to regularly ping ourselves to help against random ping timeouts
+    this.__sendAttemptStamp = 0;
+
     this.transportStatus = "unknown";
   },
   __error: function(text) {
@@ -118,10 +121,23 @@ qwebirc.irc.IRCConnection = new Class({
     this.__floodLastRequest = t;
     return false;
   },
-  send: function(data, synchronous) {
+  sendPingIfNeeded: function(ownNick,signedOn) {
+    if (!this.disconnected) {
+      if (signedOn && (Date.now() - this.__sendAttemptStamp > 180e3)) {
+        // this way we're pinging an IRC server itself so it knows we aren't dead
+        this.send('ping ' + ownNick);
+      } else if (this.__ws && this.__wsAuthed && (Date.now() - this.__sendAttemptStamp > 10e3)) {
+        // this way where we're "pinging" websocket connection to indicate we're still online
+        this.__ws.send("z");
+	  }
+    }
+  },
+  send: function(data, synchronous, unload) {
     this.__pubSeqNo++;
     if(this.disconnected)
       return false;
+
+    this.__sendAttemptStamp = Date.now();
 
     // this MAY work better since sendBeacon is getting ignored in some later browsers
     // we won't return after this in case it also gets broken. guess it's better to send quit command twice than never
@@ -349,7 +365,9 @@ qwebirc.irc.IRCConnection = new Class({
     }.bind(this);
     ws.onmessage = function(m) {
       var data = m.data;
-      if(!this.__wsAuthed) {
+      if(data.charAt(0) == "z") {
+        return;
+      } else if(!this.__wsAuthed) {
         if(data == "sTrue") {
           this.__wsAuthed = true;
           this.__wsEverConnected = true;

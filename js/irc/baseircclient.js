@@ -38,9 +38,14 @@ qwebirc.irc.BaseIRCClient = new Class({
       onRecv: this.dispatch.bind(this),
       serverPassword: this.options.serverPassword
     });
-  
+
     this.send = this.connection.send.bind(this.connection);
     this.disconnect = this.connection.disconnect.bind(this.connection);
+
+	// [kreon] we want to regularly ping ourselves to help against random ping timeouts
+    this.__pingInterval = setInterval(function() {
+      this.connection.sendPingIfNeeded(this.nickname, this.__signedOn);
+    }.bind(this), 15e3);
 
     this.connection.addEvent("error", function(message) {
       this.printConnectionError(message);
