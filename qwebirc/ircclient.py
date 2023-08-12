@@ -7,6 +7,12 @@ from twisted.names.client import Resolver
 import hmac, time, config, random, qwebirc.config_options as config_options
 from config import HMACTEMPORAL
 
+IRCCONNS = {}
+IRCPORTS = {}
+for isrv in config.IRCSERVERS:
+  IRCCONNS[isrv[0]] = 0
+  IRCPORTS[isrv[0]] = isrv[1]
+
 if config.get("CONNECTION_RESOLVER"):
   CONNECTION_RESOLVER = Resolver(servers=config.get("CONNECTION_RESOLVER"))
 else:
@@ -102,7 +108,9 @@ class QWebIRCClient(basic.LineReceiver):
     if pass_ is not None:
       self.write("PASS :%s" % pass_)
     self.write("NICK %s" % nick)
-    
+
+    IRCCONNS[f["isrv"]] += 1;
+
     self.factory.client = self
     self("connect")
 
@@ -114,6 +122,13 @@ class QWebIRCClient(basic.LineReceiver):
       self.disconnect("Connection to IRC server lost: %s" % self.lastError)
     else:
       self.disconnect("Connection to IRC server lost.")
+
+    isrv = self.factory.ircinit["isrv"];
+    if IRCCONNS[isrv] > 1:
+      IRCCONNS[isrv] -= 1;
+    else:
+      IRCCONNS[isrv] = 0;
+
     self.factory.client = None
     basic.LineReceiver.connectionLost(self, reason)
 
@@ -150,13 +165,31 @@ def createIRC(*args, **kwargs):
   tcpkwargs = {}
   if hasattr(config, "OUTGOING_IP"):
     tcpkwargs["bindAddress"] = (config.OUTGOING_IP, 0)
-  
+
+  print(IRCCONNS)
+
+  availableServers = []
+  for x in IRCCONNS.keys():
+    if IRCCONNS[x] < 3:
+      availableServers.append(x)
+
+  if len(availableServers) > 0:
+    randomServer = random.choice(availableServers)
+    serverToUse = randomServer
+  else:
+    serverToUse = min(IRCCONNS, key=lambda k: IRCCONNS[k])
+
+  portToUse = IRCPORTS[serverToUse]
+
+  print(serverToUse, portToUse)
+  f.ircinit["isrv"] = serverToUse
+
   if CONNECTION_RESOLVER is None:
     if hasattr(config, "SSLPORT"):
       from twisted.internet import ssl
-      reactor.connectSSL(config.IRCSERVER, config.SSLPORT, f, ssl.ClientContextFactory(), **tcpkwargs)
+      reactor.connectSSL(serverToUse, portToUse, f, ssl.ClientContextFactory(), **tcpkwargs)
     else:
-      reactor.connectTCP(config.IRCSERVER, config.IRCPORT, f, **tcpkwargs)
+      reactor.connectTCP(serverToUse, portToUse, f, **tcpkwargs)
     return f
 
   def callback(result):
@@ -165,7 +198,7 @@ def createIRC(*args, **kwargs):
   def errback(err):
     f.clientConnectionFailed(None, err) # None?!
 
-  d = CONNECTION_RESOLVER.lookupService(config.IRCSERVER, (1, 3, 11))
+  d = CONNECTION_RESOLVER.lookupService(serverToUse, (1, 3, 11))
   d.addCallbacks(callback, errback)
   return f
 

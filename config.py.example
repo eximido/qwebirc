@@ -14,16 +14,13 @@ from qwebirc.config_options import *
 # IRC OPTIONS
 # ---------------------------------------------------------------------
 #
-# OPTION: IRCSERVER
-#         Hostname (or IP address) of IRC server to connect to.
-# OPTION: IRCPORT
-#         Port of IRC server to connect to.
-IRCSERVER, IRCPORT = "irc.myserver.com", 6667
+# OPTION: IRCSERVERS
+#         Array of hostnames (or IP addresses) of IRC servers to connect to.
+IRCSERVERS = [["irc.myserver.com",9996],["irc.anotherserver.com",9996]]
 
 # OPTION: SSLPORT
-#         SSL port of IRC server to connect to.
-#         If this option is uncommented it will override IRCPORT.
-#SSLPORT = 6697
+#         Whether or not to use SSL when connecting to servers
+SSLPORT = True
 
 # OPTION: REALNAME
 #         The realname field of IRC clients will be set to this value.
