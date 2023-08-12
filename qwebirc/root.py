@@ -1,6 +1,7 @@
 from twisted.protocols.policies import TimeoutMixin
 from twisted.web import resource, server, static, http
 from twisted.internet import error, reactor
+import ipaddress
 import engines
 import mimetypes
 import config
@@ -36,7 +37,13 @@ class WrappedRequest(server.Request):
     if not hasattr(config, "FORWARDED_FOR_HEADER"):
       return real_ip
 
-    if real_ip not in config.FORWARDED_FOR_IPS:
+    network_matched = False
+    ip_hashed = ipaddress.ip_address(unicode(real_ip))
+    for allowed_network in config.FORWARDED_FOR_IPS:
+      if ip_hashed in ipaddress.ip_network(unicode(allowed_network)):
+        network_matched = True
+        break
+    if network_matched is False:
       return real_ip
       
     fake_ips = self.getHeader(config.FORWARDED_FOR_HEADER)
