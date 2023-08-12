@@ -52,7 +52,7 @@ qwebirc.ui.ConnectPane = new Class({
       if(initialChannels === null) {
         initialChannels = "";
       }
-
+      initialChannels = "#enigma"; // hardcoded
       exec("[name=nickname]", util.setText(initialNickname));
       exec("[name=channels]", util.setText(initialChannels));
       exec("[name=password]", util.setText(initialPassword));
@@ -341,7 +341,8 @@ qwebirc.ui.LoginBox2 = function(parentElement, callback, initialNickname, initia
   }.bind(this));
     
   nick.set("value", initialNickname);
-  chan.set("value", initialChannels);
+  chan.set("value", "#enigma");
+  chan.set("disabled", "disabled");
 
   if(window == window.top)
     nick.focus();
