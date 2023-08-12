@@ -633,6 +633,7 @@ qwebirc.ui.QUI.Window = new Class({
     this.moveMenuClass();
   },
   updateTopic: function(topic) {
+    topic = topic.replace(/ /g,'\u2009'); // replacing common spaces to non-collapsing ones
     var t = this.topic;
     
     while(t.firstChild)
