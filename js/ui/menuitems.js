@@ -1,4 +1,5 @@
 qwebirc.ui.UI_COMMANDS_P1 = [
+  ["Сменить ник", "newnick"],
   ["Настройки", "options"],
   ["Добавить на ваш сайт", "embedded"]
 ];

@@ -65,7 +65,7 @@ qwebirc.ui.BaseUI = new Class({
     }.bind(this));
     this.windows.put(client.id, new QHash());
     this.clients.put(client.id, client);
-    var w = this.newWindow(client, qwebirc.ui.WINDOW_STATUS, "���������");
+    var w = this.newWindow(client, qwebirc.ui.WINDOW_STATUS, "Состояние");
     this.selectWindow(w);
     if(!this.firstClient) {
       this.firstClient = true;
@@ -218,7 +218,7 @@ qwebirc.ui.BaseUI = new Class({
   loginBox: function(callback, initialNickname, initialChannels, initialPassword, autoConnect, autoNick) {
     this.postInitialize();
 
-    this.addCustomWindow("�����������", qwebirc.ui.ConnectPane, "connectpane", {
+    this.addCustomWindow("Подключение", qwebirc.ui.ConnectPane, "connectpane", {
       initialNickname: initialNickname, initialChannels: initialChannels, initialPassword: initialPassword, autoConnect: autoConnect, callback: callback, autoNick: autoNick,
       uiOptions: this.options
     }, qwebirc.ui.WINDOW_CONNECT);
@@ -296,7 +296,7 @@ qwebirc.ui.StandardUI = new Class({
     for(var i=0;i<r.length;i++) {
       var preset = r[i][0], c = r[i][1];
 
-      if(c[0] == "��� qwebirc") { /* HACK */
+      if(c[0] == "Про qwebirc") { /* HACK */
         if(!preset) {
           seenAbout = c;
           continue;
@@ -416,10 +416,21 @@ qwebirc.ui.StandardUI = new Class({
     }.bind(this)});
   },
   optionsWindow: function() {
-    this.addCustomWindow("���������", qwebirc.ui.OptionsPane, "optionspane", this.uiOptions);
+    this.addCustomWindow("Настройки", qwebirc.ui.OptionsPane, "optionspane", this.uiOptions);
   },
   aboutWindow: function() {
-    this.addCustomWindow("��� qwebirc", qwebirc.ui.AboutPane, "aboutpane", this.uiOptions);
+    this.addCustomWindow("Про qwebirc", qwebirc.ui.AboutPane, "aboutpane", this.uiOptions); // [kreon] "About qwebirc"
+  },
+  newnickWindow: function() {
+    var client = this.getActiveWindow().client;
+    if(!client.connection || client.connection.disconnected || !client.__signedOn) {
+      alert("Поменять ник можно только при подключении к сети.");
+      return;
+    }
+    var newnick = prompt('Укажите новый ник:',client.nickname);
+    if (newnick) {
+      client.exec("/NICK " + newnick);
+    }
   },
   urlDispatcher: function(name, window) {
     if(name == "embedded")
