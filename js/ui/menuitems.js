@@ -37,6 +37,10 @@ qwebirc.ui.MENU_ITEMS = function() {
     return this.client.isIgnored(nick);
   };
 
+  var isOwnNick = function(nick) {
+    return this.client.nickname === nick;
+  };
+
   var invert = qwebirc.util.invertFn, compose = qwebirc.util.composeAnd;
   
   var command = function(cmd) {
@@ -45,6 +49,10 @@ qwebirc.ui.MENU_ITEMS = function() {
   
   return [
     {
+      text: "обратиться", 
+      fn: command("refer"),
+      predicate: invert(isOwnNick)
+    },{
       text: "информация", 
       fn: command("whois"),
       predicate: true

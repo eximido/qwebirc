@@ -270,5 +270,13 @@ qwebirc.irc.Commands = new Class({
     }
     
     this.send("PART " + channel + " :" + message);
+  }],
+  cmd_REFER: [false, 2, 1, function(args) {
+    var node = this.parentObject.ui.inputbox;
+    var text = node.value
+    var pos = node.selectionDirection === 'backward' ? node.selectionStart : node.selectionEnd;
+    node.value = text.slice(0, pos) + '@' + args[0] + ', ' + text.slice(pos);
+    node.focus();
+    node.selectionStart = node.selectionEnd = pos + args[0].length + 3;
   }]
 });

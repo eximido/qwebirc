@@ -444,6 +444,8 @@ qwebirc.ui.StandardUI = new Class({
       return ["span", function(nick) {
         if(this.uiOptions.QUERY_ON_NICK_CLICK && this.active.type !== 2) {
           window.client.exec("/QUERY " + nick);
+        } else if(this.active.type === 4) {
+          window.client.exec("/REFER " + nick);
         } else {
           window.client.exec("/WHOIS " + nick);
         }
