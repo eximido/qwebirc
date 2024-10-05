@@ -442,7 +442,7 @@ qwebirc.ui.StandardUI = new Class({
     /* doesn't really belong here */
     if(name == "whois") {
       return ["span", function(nick) {
-        if(this.uiOptions.QUERY_ON_NICK_CLICK) {
+        if(this.uiOptions.QUERY_ON_NICK_CLICK && this.active.type !== 2) {
           window.client.exec("/QUERY " + nick);
         } else {
           window.client.exec("/WHOIS " + nick);
