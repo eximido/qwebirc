@@ -83,6 +83,8 @@ qwebirc.irc.Commands = new Class({
 
     this.parentObject.newWindow(args[0], qwebirc.ui.WINDOW_QUERY, true);
 
+    this.getActiveWindow().client.exec("/WHOIS " + args[0]);
+
     if((args.length > 1) && (args[1] != ""))
       return ["SAY", args[1]];
   }],
