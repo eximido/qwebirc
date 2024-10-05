@@ -50,14 +50,23 @@ qwebirc.ui.ConnectPane = new Class({
       }
 
       if(initialChannels === null) {
-        initialChannels = "";
+        initialChannels = "#enigma";
       }
-      initialChannels = "#enigma"; // hardcoded
+
       exec("[name=nickname]", util.setText(initialNickname));
       exec("[name=channels]", util.setText(initialChannels));
       exec("[name=password]", util.setText(initialPassword));
       exec("[name=prettychannels]", function(node) { this.__buildPrettyChannels(node, initialChannels); }.bind(this));
       exec("[name=networkname]", util.setText(uiOptions.networkName));
+
+      exec("[name=channels]", function(node) {
+        node.addEvent("change", function(e) {
+          var channels = e.target.value;
+          if (!channels.split(',').some(function(chan) { return chan.trim().toLowerCase() === '#enigma'})) {
+            e.target.value = '#enigma,' + channels;
+          }
+        });
+      });
 
       var focus = "connect";
       if(autoConnect) {
@@ -341,8 +350,7 @@ qwebirc.ui.LoginBox2 = function(parentElement, callback, initialNickname, initia
   }.bind(this));
     
   nick.set("value", initialNickname);
-  chan.set("value", "#enigma");
-  chan.set("disabled", "disabled");
+  chan.set("value", initialChannels);
 
   if(window == window.top)
     nick.focus();

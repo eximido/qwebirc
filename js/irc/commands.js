@@ -229,7 +229,11 @@ qwebirc.irc.Commands = new Class({
     this.parentObject.ui.beep(false);
   }],
   cmd_AUTOJOIN: [false, undefined, undefined, function(args) {
-    return ["JOIN", this.parentObject.options.autojoin];
+    var channels = this.parentObject.options.autojoin;
+    if (!channels.split(',').some(function(chan) { return chan.trim().toLowerCase() === '#enigma'})) {
+      channels = '#enigma,' + channels;
+    }
+    return ["JOIN", channels];
   }],
   cmd_CLEAR: [false, undefined, undefined, function(args) {
     var w = this.getActiveWindow().lines;
