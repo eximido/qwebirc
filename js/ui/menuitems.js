@@ -45,18 +45,18 @@ qwebirc.ui.MENU_ITEMS = function() {
   
   return [
     {
-      text: "whois", 
+      text: "информация", 
       fn: command("whois"),
       predicate: true
     },
     {
-      text: "ЛС",
+      text: "переписка...",
       fn: command("query"),
       predicate: true
     },
     {
-      text: "slap",
-      fn: function(nick) { this.client.exec("/ME slaps " + nick + " around a bit with a large fishbot"); },
+      text: "позвать",
+      fn: function(nick) { this.client.exec("/ME окликает " + nick + " и машет рукой."); },
       predicate: true
     },
     {
